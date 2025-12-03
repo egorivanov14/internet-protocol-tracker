@@ -2,6 +2,9 @@
 #include <iomanip>
 #include "file_reader.h"
 #include "filters.h"
+#include "sorts.h"
+#include "comparators.h"
+#include <vector>
 
 using namespace std;
 
@@ -56,6 +59,47 @@ int main() {
         case 3:
             printSessions(filterAfterEightAM(sessions), "После 8:00:00");
             break;
+        case 4: {
+            vector<InternetSession*> sessionPtrs;
+            for (auto& session : sessions) {
+                sessionPtrs.push_back(&session);
+            }
+
+            cout << "\n--- Выбор метода сортировки ---\n";
+            cout << "1. Сортировка вставками\n";
+            cout << "2. Быстрая сортировка\n";
+            int sortMethod;
+            cin >> sortMethod;
+
+            cout << "\n--- Выбор критерия сравнения ---\n";
+            cout << "1. По убыванию времени использования\n";
+            cout << "2. По названию программы и байтам\n";
+            int compareMethod;
+            cin >> compareMethod;
+
+            void (*sortFuncs[])(vector<InternetSession*>&, ComparatorFunc) = {
+                insertionSort,
+                quickSort
+            };
+
+            ComparatorFunc compareFuncs[] = {
+                compareByUsageTime,
+                compareByProgramAndBytes
+            };
+
+            if (sortMethod >= 1 && sortMethod <= 2 && compareMethod >= 1 && compareMethod <= 2) {
+                sortFuncs[sortMethod - 1](sessionPtrs, compareFuncs[compareMethod - 1]);
+
+                cout << "\n=== Отсортированные записи ===" << endl;
+                for (const auto* session : sessionPtrs) {
+                    printSession(*session);
+                }
+            }
+            else {
+                cout << "Неверный выбор!" << endl;
+            }
+            break;
+        }
         case 0:
             cout << "Выход из программы" << endl;
             break;
