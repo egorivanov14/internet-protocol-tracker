@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include "file_reader.h"
+#include "filters.h"
 
 using namespace std;
 
@@ -18,6 +19,13 @@ void printSession(const InternetSession& session) {
         << endl;
 }
 
+void printSessions(const vector<InternetSession>& sessions, const string& title) {
+    cout << "\n=== " << title << " (" << sessions.size() << " записей) ===" << endl;
+    for (const auto& session : sessions) {
+        printSession(session);
+    }
+}
+
 int main() {
 
     setlocale(LC_ALL, "Russian");
@@ -27,11 +35,34 @@ int main() {
     cout << "Группа: 25ПИнж-1д" << endl;
 
     auto sessions = readDataFromFile("data.txt");
-    cout << "\nЗагружено записей: " << sessions.size() << endl;
 
-    for (const auto& session : sessions) {
-        printSession(session);
-    }
+    int choice;
+    do {
+        cout << "\n--- Меню ---\n";
+        cout << "1. Показать все записи\n";
+        cout << "2. Фильтр: Программа Skype\n";
+        cout << "3. Фильтр: После 8:00:00\n";
+        cout << "0. Выход\n";
+        cout << "Выбор: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            printSessions(sessions, "Все записи");
+            break;
+        case 2:
+            printSessions(filterBySkype(sessions), "Skype");
+            break;
+        case 3:
+            printSessions(filterAfterEightAM(sessions), "После 8:00:00");
+            break;
+        case 0:
+            cout << "Выход из программы" << endl;
+            break;
+        default:
+            cout << "Неверный выбор!" << endl;
+        }
+    } while (choice != 0);
 
     return 0;
 }
