@@ -11,3 +11,4 @@ int main() {
     cout << "Группа: 25ПИнж-1д" << endl;
     return 0;
 }
+    
